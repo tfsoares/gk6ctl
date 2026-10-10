@@ -62,6 +62,8 @@ gk6ctl keys                      # list key names you can use in a spec
 gk6ctl backup [dir]              # snapshot the data dir into ./backups
 ```
 
+gk6ctl ensure <file.cmf>          # apply only if the keyboard is present (for agents)
+
 Profiles are read from the app's data dir `~/GK6XPlus-CMS/Account/0/Devices/<ModelID>/*.cmf`
 (override with `GK6_DATA`). `gk6ctl apply` refuses ModeIndex 0 — the online-only
 layer cannot be persisted (by design of the keyboard family).
@@ -108,6 +110,29 @@ gk6ctl apply --json layer.json
 | `0x0A010001` | key bound to a macro (macro bytes uploaded on flash) |
 
 Examples: `LCtrl+Up` = `0x02005201`, `LWin+Space` = `0x02002C08`, `MediaPrev` = `0x030000B6`.
+
+## Run at login (optional)
+
+You normally **don't need this** — the layout lives in the keyboard's flash, so it
+survives reboots. First check it: reboot (or unplug/replug the keyboard) and see
+whether your layer comes back. If a power cycle resets the keyboard to a default
+layer, install a login agent that re-applies your layer each session:
+
+```bash
+scripts/install-launchagent.sh                 # targets your layer-3 profile, or:
+scripts/install-launchagent.sh path/to/layer.cmf   # target a specific profile
+```
+
+This creates `~/Library/LaunchAgents/com.tfsoares.gk6ctl.ensure.plist` which runs
+`gk6ctl ensure <profile>` at login via a generated wrapper
+(`.runtime/ensure-at-login.sh`). `ensure` is idempotent and **silently skips** when
+the keyboard isn't connected (e.g. laptop booted on battery without the board);
+logs go to `~/gk6ctl/logs/ensure.log`. Uninstall:
+
+```bash
+launchctl bootout "gui/$(id -u)/com.tfsoares.gk6ctl.ensure"
+rm ~/Library/LaunchAgents/com.tfsoares.gk6ctl.ensure.plist
+```
 
 ## Deleting the GK6+ app
 

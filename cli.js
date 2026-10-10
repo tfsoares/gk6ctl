@@ -24,6 +24,8 @@ USAGE
   gk6ctl apply --json <file.json>   flash a raw JSON profile body
   gk6ctl build <spec.json> [--out p.json]  create a profile from a key spec (no app needed)
   gk6ctl keys                      list key names usable in a spec
+  gk6ctl ensure <file.cmf>         apply only if the keyboard is present (for login/boot
+                                   agents; idempotent, silent when nothing to do)
   gk6ctl backup [dir]               copy your profiles/macros/LE data into ./backups
   gk6ctl help
 
@@ -115,7 +117,7 @@ async function cmdDecode(file) {
     }
 }
 
-async function cmdApply(file, dataDir, opts) {
+async function cmdApply(file, dataDir, opts, { silent = false } = {}) {
     let jsonData;
     if (opts.json) {
         jsonData = JSON.parse(fs.readFileSync(opts.json, 'utf8'));
@@ -131,6 +133,10 @@ async function cmdApply(file, dataDir, opts) {
 
     const found = await transport.findDevice();
     if (!found) {
+        if (silent) {
+            console.log('no responsive keyboard found — nothing to do.');
+            return;
+        }
         throw new Error('no responsive keyboard found. Quit the GK6+ app first (right-click tray icon → Quit).');
     }
     const dev = found.dev;
@@ -178,6 +184,9 @@ async function main() {
             case 'apply':
                 if (!rest[0] && !opts['--json']) throw new Error('usage: gk6ctl apply <file.cmf> | gk6ctl apply --json <file.json>');
                 return cmdApply(rest[0], dataDir, opts);
+            case 'ensure':
+                if (!rest[0]) throw new Error('usage: gk6ctl ensure <file.cmf>');
+                return cmdApply(rest[0], dataDir, opts, { silent: true });
             case 'backup': return cmdBackup(rest[0]);
             case 'help':
             case '--help':
