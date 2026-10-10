@@ -1,0 +1,33 @@
+{
+  "name": "gk6ctl",
+  "version": "0.1.0",
+  "description": "Flash and manage GK6+ / COR-M3 keyboards from the CLI — no GK6+ Electron app needed. Layouts are written to the keyboard's onboard flash and work without any host software.",
+  "license": "MIT",
+  "author": "Tiago Soares",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tfsoares/gk6ctl.git"
+  },
+  "keywords": [
+    "gk6",
+    "cor-m3",
+    "keyboard",
+    "hid",
+    "hidapi",
+    "node-hid",
+    "mechanical-keyboard",
+    "firmware"
+  ],
+  "bin": {
+    "gk6ctl": "bin/gk6ctl"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "scripts": {
+    "start": "node cli.js"
+  },
+  "dependencies": {
+    "node-hid": "^3.1.2"
+  }
+}

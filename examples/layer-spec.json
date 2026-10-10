@@ -1,0 +1,14 @@
+{
+  "name": "gaming layer",
+  "mode": 3,
+  "keys": [
+    { "index": 65, "key": "LCtrl+Up" },
+    { "index": 66, "key": "LWin+D" },
+    { "index": 67, "key": "LWin+Space" },
+    { "index": 68, "key": "LCtrl+LShift+LWin+4" }
+  ],
+  "fnKeys": [
+    { "index": 2, "key": "MediaPlayPause" },
+    { "index": 3, "key": "MediaNext" }
+  ]
+}
